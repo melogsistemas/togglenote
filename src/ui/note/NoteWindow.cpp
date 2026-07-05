@@ -581,7 +581,11 @@ void NoteWindow::setPinSoloMode(bool on)
     applyWindowOpacity();
 }
 
-void NoteWindow::enterEvent(QEnterEvent *event)
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+    void NoteWindow::enterEvent(QEnterEvent *event)
+#else
+    void NoteWindow::enterEvent(QEvent *event)
+#endif
 {
     QWidget::enterEvent(event);
     m_mouseHovered = true;
