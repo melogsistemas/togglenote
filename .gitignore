@@ -1,0 +1,41 @@
+# Build
+*build*/
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+Makefile
+compile_commands.json
+package/
+_CPack_Packages/
+
+# Qt
+*.autogen
+mocs_compilation.cpp
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Tooling
+.cache/
+.opencode/
+
+# Documentation site (lives on docs-site branch)
+docs/
+
+# Windows cross-compilation artifacts
+win7-updates/
+WindowsUCRT/
+WindowsUCRT.zip
+api-ms-win-crt-*/
+api-ms-win-crt-*.zip
+aqtinstall.log
+.aider*
+tools/

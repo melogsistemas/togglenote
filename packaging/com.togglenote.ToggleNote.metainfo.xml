@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop-application">
+  <id>com.togglenote.ToggleNote</id>
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>MIT</project_license>
+  <name>ToggleNote</name>
+  <summary>Lightweight sticky notes that float above everything</summary>
+  <description>
+    <p>
+      ToggleNote is a fast, native sticky-notes application that stays on top
+      of your other windows. Write quick notes, organize ideas, and keep them
+      visible without clutter.
+    </p>
+    <ul>
+      <li>Always-on-top notes that float above other windows</li>
+      <li>Fully customizable toolbar with drag-and-drop reordering</li>
+      <li>25 remappable keyboard shortcuts</li>
+      <li>Global hotkeys to show/hide all notes</li>
+      <li>System tray integration with ghost mode</li>
+      <li>Flat text files — no databases, no vendor lock-in</li>
+      <li>Cross-platform: Linux, Windows 7–11, macOS</li>
+    </ul>
+  </description>
+  <launchable type="desktop-id">togglenote.desktop</launchable>
+  <url type="homepage">https://github.com/melogsistemas/togglenote</url>
+  <url type="bugtracker">https://github.com/melogsistemas/togglenote/issues</url>
+  <screenshots>
+    <screenshot type="default">
+      <image>https://raw.githubusercontent.com/melogsistemas/togglenote/main/docs/assets/screenshots/note.png</image>
+      <caption>Main note window</caption>
+    </screenshot>
+  </screenshots>
+  <releases>
+    <release version="1.0.0" date="2026-07-01"/>
+  </releases>
+  <content_rating type="oars-1.1"/>
+</component>

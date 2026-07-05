@@ -1,0 +1,80 @@
+{
+  "version": 3,
+  "configurePresets": [
+    {
+      "name": "linux",
+      "displayName": "Linux (native)",
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/build-linux",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release",
+        "CMAKE_INTERPROCEDURAL_OPTIMIZATION": "ON"
+      }
+    },
+    {
+      "name": "linux-debug",
+      "displayName": "Linux (native, debug)",
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/build-linux-debug",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug"
+      }
+    },
+    {
+      "name": "windows-x86",
+      "displayName": "Windows x86 32-bit (cross-compile)",
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/build-win32",
+      "cacheVariables": {
+        "CMAKE_TOOLCHAIN_FILE": "${sourceDir}/scripts/toolchain-mingw32.cmake",
+        "CMAKE_BUILD_TYPE": "Release",
+        "CMAKE_INTERPROCEDURAL_OPTIMIZATION": "ON",
+        "Qt5_DIR": "$env{QT_MINGW32_DIR}/lib/cmake/Qt5"
+      }
+    },
+    {
+      "name": "windows-x64",
+      "displayName": "Windows x64 64-bit (cross-compile)",
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/build-win64",
+      "cacheVariables": {
+        "CMAKE_TOOLCHAIN_FILE": "${sourceDir}/scripts/toolchain-mingw64.cmake",
+        "CMAKE_BUILD_TYPE": "Release",
+        "CMAKE_INTERPROCEDURAL_OPTIMIZATION": "ON",
+        "Qt5_DIR": "$env{QT_MINGW64_DIR}/lib/cmake/Qt5"
+      }
+    },
+    {
+      "name": "macos",
+      "displayName": "macOS (native)",
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/build-macos",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release",
+        "CMAKE_INTERPROCEDURAL_OPTIMIZATION": "ON"
+      }
+    }
+  ],
+  "buildPresets": [
+    {
+      "name": "linux",
+      "configurePreset": "linux"
+    },
+    {
+      "name": "linux-debug",
+      "configurePreset": "linux-debug"
+    },
+    {
+      "name": "windows-x86",
+      "configurePreset": "windows-x86"
+    },
+    {
+      "name": "windows-x64",
+      "configurePreset": "windows-x64"
+    },
+    {
+      "name": "macos",
+      "configurePreset": "macos"
+    }
+  ]
+}

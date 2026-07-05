@@ -1,0 +1,12 @@
+[Desktop Entry]
+Type=Application
+Name=ToggleNote
+GenericName=Sticky Notes
+Comment=Lightweight sticky notes that float above everything
+Exec=togglenote
+Icon=togglenote
+Terminal=false
+StartupNotify=true
+Categories=Utility;TextEditor;Office;
+Keywords=notes;sticky;todo;text;
+StartupWMClass=togglenote

@@ -1,0 +1,40 @@
+<RCC>
+    <qresource prefix="/">
+        <file alias="theme.qss">../src/design/theme.qss</file>
+        <file>icons/new.svg</file>
+        <file>icons/delete.svg</file>
+        <file>icons/cut.svg</file>
+        <file>icons/copy.svg</file>
+        <file>icons/paste.svg</file>
+        <file>icons/undo.svg</file>
+        <file>icons/redo.svg</file>
+        <file>icons/search.svg</file>
+        <file>icons/bold.svg</file>
+        <file>icons/italic.svg</file>
+        <file>icons/underline.svg</file>
+        <file>icons/strikethrough.svg</file>
+        <file>icons/clearformat.svg</file>
+        <file>icons/ontop.svg</file>
+        <file>icons/pin.svg</file>
+        <file>icons/settings.svg</file>
+        <file>icons/lock.svg</file>
+        <file>icons/reset.svg</file>
+        <file>icons/plus.svg</file>
+        <file>icons/minus.svg</file>
+        <file>icons/checked.svg</file>
+        <file>icons/close.svg</file>
+        <file>icons/minimize.svg</file>
+        <file>icons/maximize.svg</file>
+        <file>icons/restore.svg</file>
+        <file>icons/hidenote.svg</file>
+        <file>icons/hideallnotes.svg</file>
+        <file>icons/tool.svg</file>
+        <file>icons/zoomin.svg</file>
+        <file>icons/zoomout.svg</file>
+        <file>icons/quicknote.svg</file>
+        <file>icons/hideshownote.svg</file>
+        <file>icons/backspace.svg</file>
+        <file>icons/ghost.svg</file>
+        <file alias="logo.svg">logo.svg</file>
+    </qresource>
+</RCC>
