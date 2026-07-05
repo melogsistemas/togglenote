@@ -38,16 +38,10 @@ static bool isShapeAvailable()
 
 void ClickThroughManager::setClickThrough(QWidget *window, bool enable)
 {
-    qDebug() << "CTM::setClickThrough enable=" << enable << "window=" << window
-             << "winId=" << (window ? window->winId() : 0) << "shapeAvail=" << isShapeAvailable();
     if (!window || !isShapeAvailable())
         return;
 
     Display *dpy = qtDisplay();
-    if (!dpy) {
-        qDebug() << "CTM::setClickThrough FAIL: qtDisplay() returned null";
-        return;
-    }
     Window win = static_cast<Window>(window->winId());
 
     if (enable) {

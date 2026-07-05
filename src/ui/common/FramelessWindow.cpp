@@ -9,7 +9,6 @@
 #include <QApplication>
 #include <QAbstractScrollArea>
 #include <QWindow>
-#include <QDebug>
 #include "ToolbarWidget.h"
 
 

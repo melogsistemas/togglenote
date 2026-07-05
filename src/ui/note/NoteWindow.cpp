@@ -290,7 +290,6 @@ bool NoteWindow::eventFilter(QObject *obj, QEvent *event)
             handleWindowDeactivated();
         break;
     case QEvent::ContextMenu:
-        qDebug() << "NW::eventFilter ContextMenu obj=" << obj << "==this?" << (obj == this);
         if (obj == this)
             return handleContextMenuEvent(static_cast<QContextMenuEvent *>(event));
         break;
@@ -346,7 +345,6 @@ bool NoteWindow::handleWindowDeactivated()
 
 bool NoteWindow::handleContextMenuEvent(QContextMenuEvent *event)
 {
-    qDebug() << "NW::handleContextMenuEvent called, isLocked=" << m_viewModel->isLocked();
     if (m_viewModel->isLocked())
         return false;
     m_inContextMenu = true;

@@ -62,13 +62,11 @@ bool Application::init()
         return m_globalHotkeyFilter->registerOne(actionId, seq);
     });
     connect(m_globalHotkeyFilter, &GlobalHotkeyService::triggered, this, [this](ActionId actionId) {
-        qDebug() << "APP: global hotkey triggered actionId=" << actionId.value;
         if (actionId == Global::ToggleNotes)
             m_noteManager->toggleAll();
         else if (actionId == Global::QuickCapture)
             m_noteManager->createNewNote();
         else if (actionId == Global::GhostMode) {
-            qDebug() << "APP: GhostMode triggered! calling toggleAllGhostMode()";
             m_noteManager->toggleAllGhostMode();
             bool anyGhost = false;
             m_noteManager->forEachController(
@@ -86,9 +84,6 @@ bool Application::init()
 
     if (startHidden)
         m_noteManager->setAllHidden(true);
-
-    qDebug() << "APP::init() m_globalHotkeyFilter created, registerAll called";
-    qDebug() << "APP::init() GhostMode shortcut =" << m_keybindings->shortcut(Global::GhostMode);
 
     processCliArgs(m_cliArgs);
     return true;

@@ -317,7 +317,6 @@ bool NoteEditor::event(QEvent *event)
 
 void NoteEditor::contextMenuEvent(QContextMenuEvent *event)
 {
-    qDebug() << "NE::contextMenuEvent called, locked=" << m_locked << "tempEdit=" << m_tempEdit;
     if (m_locked && !m_tempEdit)
         return;
 
@@ -334,8 +333,6 @@ void NoteEditor::contextMenuEvent(QContextMenuEvent *event)
 
     menu->exec(event->globalPos());
     delete menu;
-    qDebug() << "NE: calling event->accept()";
-    event->accept();
 }
 
 void NoteEditor::setAlwaysOnTop(bool on)

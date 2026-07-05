@@ -80,7 +80,6 @@ void GlobalHotkeyService::registerAll()
 {
     unregisterAll();
 #if !defined(Q_OS_WIN) && !defined(Q_OS_MACOS)
-    qDebug() << "GHS::registerAll() m_isWayland=" << m_isWayland;
     if (m_isWayland)
         return;
 #endif
@@ -89,7 +88,6 @@ void GlobalHotkeyService::registerAll()
         if (def.id.value < 200)
             continue;
         QKeySequence seq = m_keybindings->shortcut(def.id);
-        qDebug() << "GHS::registerAll() action=" << def.id.value << def.label << "seq=" << seq;
         if (seq.isEmpty())
             continue;
         QString err = registerOne(def.id, seq);
@@ -190,31 +188,25 @@ QString GlobalHotkeyService::registerOne(ActionId actionId, const QKeySequence &
 
 #else
     if (m_isWayland) {
-        qDebug() << "GHS::registerOne() Wayland detected, skipping";
         return {};
     }
     Display *display = x11Display();
     if (!display) {
-        qDebug() << "GHS::registerOne() X11 display not available";
         return QStringLiteral("X11 display not available.");
     }
 
     KeySym sym = qtKeyToKeySym(key);
     if (sym == NoSymbol) {
-        qDebug() << "GHS::registerOne() NoSymbol for key" << key;
         return QStringLiteral("This key cannot be mapped to an X11 keysym.");
     }
 
     KeyCode keycode = XKeysymToKeycode(display, sym);
     if (!keycode) {
-        qDebug() << "GHS::registerOne() No keycode for sym" << sym;
         return QStringLiteral("No X11 keycode found for this key.");
     }
 
     unsigned int xmods = qtModsToXMods(mods);
     Window       root  = DefaultRootWindow(display);
-
-    qDebug() << "GHS::registerOne() actionId=" << actionId.value << "keycode=" << (int) keycode << "xmods=" << xmods;
 
     for (unsigned int spec : specialModifiers)
         XGrabKey(display, keycode, xmods | spec, root, True, GrabModeAsync, GrabModeAsync);
@@ -259,14 +251,9 @@ bool GlobalHotkeyService::nativeEventFilter(const QByteArray &eventType, void *m
         if ((event->response_type & ~0x80) == XCB_KEY_PRESS) {
             auto *kp = reinterpret_cast<xcb_key_press_event_t *>(event);
 
-            qDebug() << "GHS::nativeEventFilter XCB_KEY_PRESS detail=" << kp->detail << "state=" << kp->state;
             for (auto it = m_x11Hotkeys.constBegin(); it != m_x11Hotkeys.constEnd(); ++it) {
                 auto match = it.value().mods == (kp->state & validModsMask);
-                qDebug() << "  check action=" << it.key().value << "stored_keycode=" << (int) it.value().keycode
-                         << "stored_mods=" << it.value().mods << "filtered_state=" << (kp->state & validModsMask)
-                         << "match_keycode=" << (it.value().keycode == kp->detail) << "match_mods=" << match;
                 if (it.value().keycode == kp->detail && match) {
-                    qDebug() << "  >>> MATCH! emitting triggered for action" << it.key().value;
                     emit triggered(it.key());
                     return true;
                 }
