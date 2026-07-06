@@ -319,6 +319,8 @@ if(WIN32)
     set(CPACK_NSIS_DISPLAY_NAME "ToggleNote")
     set(CPACK_NSIS_MUI_ICON "${CMAKE_SOURCE_DIR}/packaging/togglenote.ico")
     set(CPACK_NSIS_MUI_UNIICON "${CMAKE_SOURCE_DIR}/packaging/togglenote.ico")
+    set(CPACK_NSIS_MUI_WELCOMEFINISHPAGE_BITMAP "${CMAKE_SOURCE_DIR}/packaging/nsis-welcome.bmp")
+    set(CPACK_NSIS_MUI_UNWELCOMEFINISHPAGE_BITMAP "${CMAKE_SOURCE_DIR}/packaging/nsis-welcome.bmp")
     set(CPACK_NSIS_CREATE_ICONS_EXTRA
         "CreateShortCut '$SMPROGRAMS\\\\$STARTMENU_FOLDER\\\\ToggleNote.lnk' '$INSTDIR\\\\bin\\\\togglenote.exe'")
     set(CPACK_NSIS_DELETE_ICONS_EXTRA

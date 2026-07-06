@@ -50,7 +50,7 @@ NoteWindow::NoteWindow(NoteViewModel       *viewModel,
     setupUI();
     setMouseTracking(true);
 
-    if (QGuiApplication::platformName() != "xcb") {
+    if (QGuiApplication::platformName() != "xcb" && QGuiApplication::platformName() != "windows") {
         m_opacityEffect = new QGraphicsOpacityEffect(this);
         m_opacityEffect->setOpacity(1.0);
         setGraphicsEffect(m_opacityEffect);
@@ -263,7 +263,7 @@ void NoteWindow::setupGeometry()
     setWindowFlags(windowFlags() | Qt::FramelessWindowHint);
     AlwaysOnTopManager::applyWindowFlags(this, m_viewModel->isAlwaysOnTop());
 
-    if (QGuiApplication::platformName() != "xcb")
+    if (QGuiApplication::platformName() != "xcb" && QGuiApplication::platformName() != "windows")
         setAttribute(Qt::WA_TranslucentBackground);
     else
         setAttribute(Qt::WA_TranslucentBackground, false);
@@ -359,6 +359,14 @@ bool NoteWindow::handleShowEvent()
 {
     applyWindowOpacity();
 
+#ifdef Q_OS_LINUX
+    // X11 ghost-mode re-init dance: on show events (e.g. after hide-all
+    // reveals the note) the existing ghost-mode state can cause new notes
+    // to interpret right/left clicks as resize operations. Toggling ghost
+    // mode off then back on (deferred via singleShot(0)) forces XShape
+    // to recalculate the input region, fixing the spurious resize.
+    // Without this, ghost-mode notes that are shown after others may stay
+    // interactive despite WS_EX_TRANSPARENT / ShapeInput being set.
     if (m_ghostMode) {
         m_windowController->setTransparentForInput(false);
         setAttribute(Qt::WA_TransparentForMouseEvents, false);
@@ -371,6 +379,7 @@ bool NoteWindow::handleShowEvent()
             }
         });
     }
+#endif
 
     if (m_autohideController->isAutohideEnabled() && m_autohideController->isToolbarVisible()
         && !rect().contains(mapFromGlobal(QCursor::pos())))
@@ -509,17 +518,40 @@ void NoteWindow::toggleGhostMode(std::optional<bool> on)
     bool targetOn = on.value_or(!m_toolbar->isButtonChecked(btnId));
     m_toolbar->setButtonChecked(btnId, targetOn);
     m_ghostMode = targetOn;
+
     m_windowController->setTransparentForInput(targetOn);
     setAttribute(Qt::WA_TransparentForMouseEvents, targetOn);
-    ClickThroughManager::setClickThrough(this, targetOn);
 
     if (targetOn) {
+#ifdef Q_OS_WIN
+        // Only need the opacity dance at 100% — the window isn't layered yet,
+        // so ClickThroughManager adding WS_EX_LAYERED from outside Qt would
+        // corrupt the backing store. Let Qt handle the transition cleanly.
+        if (qFuzzyCompare(windowOpacity(), 1.0)) {
+            m_savedOpacity = windowOpacity();
+            setWindowOpacity(0.99);
+            m_ghostOpacityOverride = 0.99;
+        }
+#endif
+        m_windowController->setTransparentForInput(true);
+        setAttribute(Qt::WA_TransparentForMouseEvents, true);
+        ClickThroughManager::setClickThrough(this, true);
+
         m_autohideWasEnabled = m_autohideController->isAutohideEnabled();
         m_autohideController->setEnabled(false);
         m_autohideController->hideToolbar();
         m_ghostIndicator->setVisible(true);
     }
     else {
+        ClickThroughManager::setClickThrough(this, false);
+        m_windowController->setTransparentForInput(false);
+        setAttribute(Qt::WA_TransparentForMouseEvents, false);
+#ifdef Q_OS_WIN
+        if (m_ghostOpacityOverride >= 0.0) {
+            setWindowOpacity(m_savedOpacity);
+            m_ghostOpacityOverride = -1.0;
+        }
+#endif
         m_ghostIndicator->setVisible(false);
         m_autohideController->setEnabled(m_autohideWasEnabled);
     }
@@ -582,9 +614,9 @@ void NoteWindow::setPinSoloMode(bool on)
 }
 
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-    void NoteWindow::enterEvent(QEnterEvent *event)
+void NoteWindow::enterEvent(QEnterEvent *event)
 #else
-    void NoteWindow::enterEvent(QEvent *event)
+void NoteWindow::enterEvent(QEvent *event)
 #endif
 {
     QWidget::enterEvent(event);
@@ -628,6 +660,12 @@ void NoteWindow::applyWindowOpacity()
 {
     if (!isVisible())
         return;
+#ifdef Q_OS_WIN
+    if (m_ghostOpacityOverride >= 0.0) {
+        setAnimatedOpacity(m_ghostOpacityOverride);
+        return;
+    }
+#endif
     qreal target = static_cast<qreal>(m_viewModel->opacity()) / 100.0;
     if (m_pinSoloMode) {
         int op = m_mouseHovered ? m_currentSettings.pinHoverOpacity() : m_currentSettings.pinIdleOpacity();

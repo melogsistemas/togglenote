@@ -127,5 +127,7 @@ private:
     bool                    m_pinSoloMode{false};
     bool                    m_mouseHovered{false};
     bool                    m_inContextMenu{false};
+    qreal                   m_savedOpacity{1.0};
+    qreal                   m_ghostOpacityOverride{-1.0};
     Settings                m_currentSettings;
 };
