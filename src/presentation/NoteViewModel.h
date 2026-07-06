@@ -8,6 +8,8 @@
 
 class INoteService;
 
+/// ViewModel for a single note. Wraps Note entity, resolves per-note overrides
+/// against global defaults, manages debounced auto-save (500ms timer).
 class NoteViewModel : public QObject
 {
     Q_OBJECT

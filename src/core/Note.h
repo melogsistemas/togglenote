@@ -5,6 +5,31 @@
 #include <QUuid>
 #include <optional>
 
+/// Domain entity representing a single note.
+/// Serialized as markdown with YAML-style front matter between `---` delimiters.
+///
+/// Storage format:
+/// ```
+/// ---
+/// id: <uuid>                        # unique identifier
+/// bgColor: "#ffee99"                # per-note background (optional)
+/// textColor: "#000000"              # per-note text color (optional)
+/// width: 300                        # window width
+/// height: 300                       # window height
+/// xPct: 0.5                         # screen-relative X position [0..1]
+/// yPct: 0.5                         # screen-relative Y position [0..1]
+/// alwaysOnTop: true                 # always-on-top flag
+/// locked: false                     # locked (read-only) flag
+/// pinned: false                     # pinned (survives hide-all) flag
+/// fontFamily: Sans                  # per-note font (optional)
+/// fontSize: 12                      # per-note font size (optional)
+/// opacity: 100                      # per-note opacity (optional)
+/// iconSize: 16                      # per-note toolbar icon size (optional)
+/// ---
+/// <markdown note content>
+/// ```
+/// Fields that match their default value are omitted during serialization.
+/// Per-note overrides use std::optional to distinguish "unset" from global defaults.
 class Note
 {
 public:
@@ -12,8 +37,10 @@ public:
         : m_id(QUuid::createUuid().toString(QUuid::WithoutBraces))
     {}
 
+    /// Deserializes a note from its markdown file content (front matter + body).
     static Note fromMarkdown(const QString &fullMarkdown);
-    QString     toMarkdown() const;
+    /// Serializes this note to markdown with front matter for storage.
+    QString toMarkdown() const;
 
     const QString &id() const
     {

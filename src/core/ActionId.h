@@ -3,6 +3,11 @@
 #include <QString>
 #include <QHash>
 
+/// Strongly-typed integer wrapper for action identifiers.
+/// Namespace-scoped constants define all available actions:
+///   Editor::   (0–14) editing commands
+///   Notes::    (100–107) note-level operations
+///   Global::   (200–202) application-wide hotkeys
 struct ActionId
 {
     int value;
@@ -20,7 +25,9 @@ struct ActionId
         return value < o.value;
     }
 
-    QString         toString() const;
+    /// Serializes the action ID to its dotted-string key (e.g. "editor.bold").
+    QString toString() const;
+    /// Deserializes a dotted-string key back to an ActionId.
     static ActionId fromString(const QString &str);
 };
 

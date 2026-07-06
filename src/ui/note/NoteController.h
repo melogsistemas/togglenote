@@ -9,6 +9,8 @@ class ISettingsProvider;
 class IKeybindingProvider;
 struct Note;
 
+/// INoteController implementation. Constructs NoteViewModel + NoteWindow,
+/// bridges window signals to higher-level signals for NoteManager.
 class NoteController : public INoteController
 {
     Q_OBJECT

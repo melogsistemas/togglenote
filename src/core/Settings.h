@@ -16,6 +16,7 @@ QString notesDir();
 
 } // namespace Defaults
 
+/// Describes a single item in the toolbar layout (button or separator).
 struct ToolbarItem
 {
     enum Type
@@ -29,6 +30,8 @@ struct ToolbarItem
     bool    visible = true;
 };
 
+/// Domain entity for all global application settings.
+/// Modified in memory during dialogs, persisted atomically on accept.
 class Settings
 {
 public:

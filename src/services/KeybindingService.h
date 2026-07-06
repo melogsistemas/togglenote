@@ -11,6 +11,9 @@
 
 class ISettingsProvider;
 
+/// Manages shortcut-to-action mapping with conflict validation.
+/// Loads defaults from allActionDefinitions(), applies user overrides from ISettingsProvider,
+/// and emits bindingsChanged() on modification.
 class KeybindingService : public QObject, public IKeybindingConfiguration
 {
     Q_OBJECT

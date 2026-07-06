@@ -4,6 +4,7 @@
 
 class INoteRepository;
 
+/// INoteService implementation delegating to INoteRepository.
 class NoteService : public INoteService
 {
 public:

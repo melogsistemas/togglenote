@@ -5,6 +5,7 @@
 #include <QMap>
 #include "ActionId.h"
 
+/// State snapshot of the editor for toolbar sync (bold/italic/underline/strike state, selection, undo/redo).
 struct EditorState
 {
     bool bold{false};
@@ -18,6 +19,8 @@ struct EditorState
     bool pasteAvailable{false};
 };
 
+/// QTextEdit subclass with rich text formatting, lock/temp-edit mode,
+/// custom context menu with note actions, and hotkey binding support.
 class NoteEditor : public QTextEdit
 {
     Q_OBJECT

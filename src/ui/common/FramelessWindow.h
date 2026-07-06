@@ -9,6 +9,8 @@
 
 class QWidget;
 
+/// Event-filter based window chrome: drag, resize, right-click drag, transparency.
+/// Attaches to a target QWidget and intercepts mouse events to provide custom window management.
 class FramelessWindow : public QObject
 {
     Q_OBJECT

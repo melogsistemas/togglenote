@@ -8,6 +8,9 @@
 
 class KeybindingService;
 
+/// Registers and dispatches global (system-wide) hotkeys.
+/// Platform-specific: X11 (xcb), Windows (RegisterHotKey), macOS (Carbon).
+/// Watches native events via QAbstractNativeEventFilter.
 class GlobalHotkeyService : public QObject, public QAbstractNativeEventFilter
 {
     Q_OBJECT

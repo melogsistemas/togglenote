@@ -7,6 +7,8 @@ class QPushButton;
 class TitleBar;
 class FramelessWindow;
 
+/// Base dialog with custom title bar, frameless window, and OK/Cancel buttons.
+/// All settings/prompt dialogs should extend this for consistent look and behavior.
 class BaseDialog : public QDialog
 {
     Q_OBJECT

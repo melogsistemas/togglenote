@@ -3,6 +3,8 @@
 #include <QtGlobal>
 #include <functional>
 
+/// Enum identifying toolbar buttons that have a dedicated ToolbarButton spec.
+/// Actions not in this enum are shortcut-only (no toolbar presence).
 enum class ButtonId
 {
     None,

@@ -3,6 +3,8 @@
 #include <QToolButton>
 #include "Design.h"
 
+/// Base class for small corner buttons (pin, lock, ghost indicator).
+/// Provides icon, tooltip, checkable state, and stack-row positioning.
 class CornerButton : public QToolButton
 {
     Q_OBJECT

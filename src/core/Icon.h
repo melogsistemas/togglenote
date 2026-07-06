@@ -3,6 +3,7 @@
 namespace Design
 {
 
+/// All available SVG icons, mapped to filenames in resources.qrc.
 enum class Icon
 {
     New,
