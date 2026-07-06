@@ -36,6 +36,10 @@ public:
     void setDragPredicate(DragPredicate pred);
     void setTransparentForInput(bool on);
 
+#ifdef Q_OS_WIN
+    void startSystemResizeWin(int edges) const;
+#endif
+
 protected:
     bool eventFilter(QObject *obj, QEvent *event) override;
 

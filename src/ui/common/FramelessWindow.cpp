@@ -11,6 +11,33 @@
 #include <QWindow>
 #include "ToolbarWidget.h"
 
+#ifdef Q_OS_WIN
+#include <windows.h>
+
+static int edgesToWin32Wmsz(int edges)
+{
+    static const int wmsz[] = {
+        0, // 0: none
+        WMSZ_LEFT, // 1: left
+        WMSZ_RIGHT, // 2: right
+        0, // 3: left|right (invalid)
+        WMSZ_TOP, // 4: top
+        WMSZ_TOPLEFT, // 5: top|left
+        WMSZ_TOPRIGHT, // 6: top|right
+        0, // 7: top|left|right (invalid)
+        WMSZ_BOTTOM, // 8: bottom
+        WMSZ_BOTTOMLEFT, // 9: bottom|left
+        WMSZ_BOTTOMRIGHT, // 10: bottom|right
+        0, // 11: bottom|left|right (invalid)
+        0, // 12: top|bottom (invalid)
+        0, // 13: top|bottom|left (invalid)
+        0, // 14: top|bottom|right (invalid)
+        0, // 15: top|bottom|left|right (invalid)
+    };
+    return (edges >= 0 && edges < 16) ? wmsz[edges] : 0;
+}
+#endif
+
 
 FramelessWindow::FramelessWindow(QWidget *targetWindow)
     : QObject(targetWindow)
@@ -119,8 +146,12 @@ bool FramelessWindow::eventFilter(QObject *obj, QEvent *event)
                 QPoint wpos  = toWindowPos(obj, me->pos());
                 int    edges = edgeAtPos(wpos);
                 if (edges != kEdgeNone && m_resizeEnabled) {
+#ifdef Q_OS_WIN
+                    startSystemResizeWin(edges);
+#else
                     if (auto *win = m_window->windowHandle())
                         win->startSystemResize(static_cast<Qt::Edges>(edges));
+#endif
                     return true;
                 }
                 bool wantDrag = false;
@@ -145,8 +176,13 @@ bool FramelessWindow::eventFilter(QObject *obj, QEvent *event)
         }
 
         if (me->button() == Qt::RightButton && (me->modifiers() & Qt::AltModifier)) {
+#ifdef Q_OS_WIN
+            static constexpr int kBottomRight = kEdgeBottom | kEdgeRight;
+            startSystemResizeWin(kBottomRight);
+#else
             if (auto *win = m_window->windowHandle())
                 win->startSystemResize(Qt::BottomEdge | Qt::RightEdge);
+#endif
             return true;
         }
 
@@ -332,3 +368,15 @@ QPoint FramelessWindow::toWindowPos(QObject *obj, const QPoint &localPos) const
         return widget->mapTo(m_window, localPos);
     return localPos;
 }
+
+#ifdef Q_OS_WIN
+void FramelessWindow::startSystemResizeWin(int edges) const
+{
+    int wmsz = edgesToWin32Wmsz(edges);
+    if (wmsz == 0)
+        return;
+    HWND hwnd = reinterpret_cast<HWND>(m_window->winId());
+    ReleaseCapture();
+    SendMessage(hwnd, WM_SYSCOMMAND, SC_SIZE | wmsz, 0);
+}
+#endif
