@@ -11,6 +11,7 @@
 #include "KeybindingService.h"
 #include "ActionId.h"
 #include "SettingsDialog.h"
+#include "SettingsViewModel.h"
 #include "OsSignalHandler.h"
 #include "CurrentProcessManager.h"
 #include "TrayIcon.h"
@@ -183,8 +184,9 @@ void Application::showPreferences()
         return;
     }
 
-    Settings snapshot = m_settingsManager->settings();
-    m_settingsDialog  = new SettingsDialog(m_settingsManager, m_keybindings);
+    auto *viewModel = new SettingsViewModel(m_settingsManager, m_keybindings, this);
+    viewModel->load();
+    m_settingsDialog = new SettingsDialog(viewModel);
     AlwaysOnTopManager::applyWindowFlags(m_settingsDialog, true);
     m_settingsDialog->setAttribute(Qt::WA_DeleteOnClose);
 
@@ -192,13 +194,14 @@ void Application::showPreferences()
         m_noteManager->forEachController([&](INoteController *ctrl) { ctrl->applyGlobalSettings(s, false); });
     });
 
-    connect(m_settingsDialog, &QDialog::finished, this, [this, snapshot](int r) {
+    connect(m_settingsDialog, &QDialog::finished, this, [this, viewModel](int r) {
         m_settingsDialog = nullptr;
         if (r == QDialog::Rejected) {
-            m_noteManager->forEachController([&](INoteController *ctrl) { ctrl->applyGlobalSettings(snapshot, true); });
+            const Settings &s = viewModel->snapshot();
+            m_noteManager->forEachController([&](INoteController *ctrl) { ctrl->applyGlobalSettings(s, true); });
         }
         else {
-            Settings s = m_settingsManager->settings();
+            const Settings &s = viewModel->settings();
             m_noteManager->forEachController([&](INoteController *ctrl) { ctrl->applyGlobalSettings(s, true); });
         }
     });

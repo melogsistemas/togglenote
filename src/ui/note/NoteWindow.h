@@ -14,7 +14,7 @@ class QGraphicsOpacityEffect;
 class NoteViewModel;
 class NoteEditor;
 class AutohideController;
-class ToolbarController;
+class IToolbarController;
 class SearchBar;
 class LockButton;
 class PinButton;
@@ -25,6 +25,8 @@ class ToolbarWidget;
 class FramelessWindow;
 class ContextMenu;
 
+/// The main note widget. Composes editor, toolbar, search bar, corner buttons,
+/// frameless window manager, and autohide controller.
 class NoteWindow : public QWidget
 {
     Q_OBJECT
@@ -109,7 +111,7 @@ private:
     NoteEditor          *m_editor{nullptr};
     SearchBar           *m_searchBar{nullptr};
     ToolbarWidget       *m_toolbar{nullptr};
-    ToolbarController   *m_toolbarController{nullptr};
+    IToolbarController  *m_toolbarController{nullptr};
     FramelessWindow     *m_windowController{nullptr};
     LockButton          *m_lockBtn{nullptr};
     PinButton           *m_pinBtn{nullptr};

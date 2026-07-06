@@ -46,6 +46,7 @@ set(SOURCES
     src/infra/NoteFileRepository.cpp
     src/infra/SettingsRepository.cpp
     src/presentation/NoteViewModel.cpp
+    src/presentation/SettingsViewModel.cpp
     src/ui/note/NoteWindow.cpp
     src/ui/note/AutohideController.cpp
     src/ui/note/NoteController.cpp
@@ -100,6 +101,7 @@ set(HEADERS
     src/ports/ISettingsProvider.h
     src/ports/IKeybindingProvider.h
     src/ports/IKeybindingConfiguration.h
+    src/ports/IToolbarController.h
     src/ports/INoteController.h
     src/services/NoteService.h
     src/services/SettingsService.h
@@ -110,6 +112,7 @@ set(HEADERS
     src/infra/NoteFileRepository.h
     src/infra/SettingsRepository.h
     src/presentation/NoteViewModel.h
+    src/presentation/SettingsViewModel.h
     src/ui/note/AutohideController.h
     src/ui/note/NoteWindow.h
     src/ui/note/NoteController.h

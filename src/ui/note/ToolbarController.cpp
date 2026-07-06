@@ -19,7 +19,7 @@ ToolbarController::ToolbarController(NoteEditor        *editor,
                                      ToolbarWidget     *toolbar,
                                      ISettingsProvider *settingsProvider,
                                      QObject           *parent)
-    : QObject(parent)
+    : IToolbarController(parent)
     , m_toolbar(toolbar)
     , m_editor(editor)
     , m_searchBar(searchBar)

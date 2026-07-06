@@ -1,8 +1,6 @@
 #include "SettingsDialog.h"
+#include "SettingsViewModel.h"
 #include "KeybindingsPage.h"
-#include "ISettingsProvider.h"
-#include "IKeybindingConfiguration.h"
-#include "Settings.h"
 #include "SettingsRowUtils.h"
 #include "ActionDefinition.h"
 #include "ActionId.h"
@@ -47,36 +45,32 @@ QListWidgetItem *makeSeparatorListItem(const QString &roleId, const QString &dis
 } // namespace
 
 
-SettingsDialog::SettingsDialog(ISettingsProvider *provider, IKeybindingConfiguration *keybindings, QWidget *parent)
+SettingsDialog::SettingsDialog(SettingsViewModel *viewModel, QWidget *parent)
     : BaseDialog(QStringLiteral("Preferences"), parent)
-    , m_provider(provider)
-    , m_keybindings(keybindings)
+    , m_viewModel(viewModel)
 {
-    const Settings &settings = m_provider->settings();
-    m_selectedColor          = settings.bgColor();
-    m_selectedFontColor      = settings.textColor();
-    m_selectedOpacity        = settings.opacity();
-    m_customColors           = settings.customColors();
-    m_toolbarLayout          = settings.toolbarLayout();
-    m_toolbarLayoutVis       = settings.toolbarLayoutVisibility();
-    const auto &kb = settings.keybindings();
-    for (auto it = kb.constBegin(); it != kb.constEnd(); ++it)
-        m_localKeybindings[ActionId::fromString(it.key())] = it.value();
+    const Settings &s   = m_viewModel->settings();
+    m_selectedColor     = s.bgColor();
+    m_selectedFontColor = s.textColor();
+    m_selectedOpacity   = s.opacity();
+    m_customColors      = s.customColors();
+    m_toolbarLayout     = s.toolbarLayout();
+    m_toolbarLayoutVis  = s.toolbarLayoutVisibility();
 
     setupUI();
 
-    m_fontFamilyRow->setCurrentFont(QFont(settings.fontFamily()));
-    m_fontSizeRow->setValue(settings.fontSize());
-    m_iconSizeRow->setValue(settings.iconSize());
-    m_autostartCheck->setChecked(settings.autostartNewNote());
-    m_startHiddenCheck->setChecked(settings.startHidden());
-    m_defaultOnTopCheck->setChecked(settings.defaultOnTop());
-    m_forceXcbCheck->setChecked(settings.forceXcbOnWayland());
-    m_autohideCheck->setChecked(settings.autohideToolbar());
-    m_timeoutSpin->setValue(settings.autohideTimeout());
-    m_opacityRow->setValue(settings.opacity());
-    m_pinHoverOpacityRow->setValue(settings.pinHoverOpacity());
-    m_pinIdleOpacityRow->setValue(settings.pinIdleOpacity());
+    m_fontFamilyRow->setCurrentFont(QFont(s.fontFamily()));
+    m_fontSizeRow->setValue(s.fontSize());
+    m_iconSizeRow->setValue(s.iconSize());
+    m_autostartCheck->setChecked(s.autostartNewNote());
+    m_startHiddenCheck->setChecked(s.startHidden());
+    m_defaultOnTopCheck->setChecked(s.defaultOnTop());
+    m_forceXcbCheck->setChecked(s.forceXcbOnWayland());
+    m_autohideCheck->setChecked(s.autohideToolbar());
+    m_timeoutSpin->setValue(s.autohideTimeout());
+    m_opacityRow->setValue(s.opacity());
+    m_pinHoverOpacityRow->setValue(s.pinHoverOpacity());
+    m_pinIdleOpacityRow->setValue(s.pinIdleOpacity());
 
     m_fontColorRow->setColor(m_selectedFontColor);
 }
@@ -84,13 +78,16 @@ SettingsDialog::SettingsDialog(ISettingsProvider *provider, IKeybindingConfigura
 void SettingsDialog::accept()
 {
     saveToolbarLayout();
-    m_provider->save(settings());
+    m_viewModel->setSettings(settings());
+    m_viewModel->accept();
     QDialog::accept();
 }
 
 void SettingsDialog::emitChanged()
 {
-    emit changed(settings());
+    saveToolbarLayout();
+    m_viewModel->setSettings(settings());
+    emit changed(m_viewModel->settings());
 }
 
 static QScrollArea *makeTabScroll(QWidget *parent)
@@ -398,7 +395,8 @@ void SettingsDialog::setupStartupTab()
 
 void SettingsDialog::setupShortcutsTab()
 {
-    m_keybindingsPage = new KeybindingsPage(m_keybindings, &m_localKeybindings);
+    m_keybindingsPage
+        = new KeybindingsPage(m_viewModel->keybindingConfiguration(), m_viewModel->mutableLocalKeybindings());
     m_tabWidget->addTab(m_keybindingsPage, QStringLiteral("Shortcuts"));
     connect(m_keybindingsPage, &KeybindingsPage::changed, this, &SettingsDialog::emitChanged);
 }
@@ -421,10 +419,11 @@ Settings SettingsDialog::settings() const
     result.setPinHoverOpacity(m_pinHoverOpacityRow->value());
     result.setPinIdleOpacity(m_pinIdleOpacityRow->value());
     result.setCustomColors(m_customColors);
-    result.setNotesDir(m_provider->settings().notesDir());
+    result.setNotesDir(m_viewModel->settings().notesDir());
     {
         QHash<QString, QKeySequence> kb;
-        for (auto it = m_localKeybindings.constBegin(); it != m_localKeybindings.constEnd(); ++it)
+        for (auto it = m_viewModel->localKeybindings().constBegin(); it != m_viewModel->localKeybindings().constEnd();
+             ++it)
             kb[it.key().toString()] = it.value();
         result.setKeybindings(kb);
     }

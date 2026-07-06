@@ -7,6 +7,7 @@
 
 class NoteManager;
 class SettingsDialog;
+class SettingsViewModel;
 class SettingsService;
 class KeybindingService;
 class NoteService;

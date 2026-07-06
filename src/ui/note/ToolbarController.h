@@ -1,22 +1,20 @@
 #pragma once
 
-#include <QObject>
 #include <QMap>
 #include <QList>
 #include <QSet>
 #include <QString>
-#include "ActionId.h"
+#include "IToolbarController.h"
 #include "ToolbarWidget.h"
 #include "ToolbarButton.h"
-#include "ButtonId.h"
 
 class NoteEditor;
 class SearchBar;
 class ISettingsProvider;
-class ContextMenu;
-struct EditorState;
 
-class ToolbarController : public QObject
+/// Controls toolbar layout, button state, search bar integration, and context menu creation.
+/// Relies on ToolbarWidget for rendering and ISettingsProvider for persisted layout.
+class ToolbarController : public IToolbarController
 {
     Q_OBJECT
 public:
@@ -26,35 +24,24 @@ public:
                       ISettingsProvider *settingsProvider,
                       QObject           *parent = nullptr);
 
-    void init();
+    void init() override;
 
-    QString buttonId(ButtonId buttonType) const
+    QString buttonId(ButtonId buttonType) const override
     {
         return m_buttonIds.value(buttonType);
     }
-    void syncToolbarState(const EditorState &editorState);
+    void syncToolbarState(const EditorState &editorState) override;
 
     void           applyLayoutVisibility();
     QSet<ActionId> layoutVisibility() const;
     void           saveLayoutVisibility();
 
-    ContextMenu *createContextMenu(QWidget *parent);
-    void         reloadToolbarLayout();
-    void         reloadToolbarLayout(const QStringList &layout, const QSet<QString> &vis);
+    ContextMenu *createContextMenu(QWidget *parent) override;
+    void         reloadToolbarLayout() override;
+    void         reloadToolbarLayout(const QStringList &layout, const QSet<QString> &vis) override;
 
 public slots:
-    void toggleSearch();
-
-signals:
-    void newNoteRequested();
-    void deleteNoteRequested();
-    void alwaysOnTopToggled(bool on);
-    void ghostModeToggled(bool on);
-    void zoomInRequested();
-    void zoomOutRequested();
-    void preferencesRequested();
-    void hideNoteRequested();
-    void hideAllNotesRequested();
+    void toggleSearch() override;
 
 private:
     QList<QList<ToolbarButton>> buildToolbarSpec();
